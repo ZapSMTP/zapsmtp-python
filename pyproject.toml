@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "zapsmtp"
+version = "0.1.0"
+description = "The official Python library for the ZapSMTP email API"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "ZapSMTP" }]
+keywords = ["email", "smtp", "transactional email", "zapsmtp", "api", "sdk"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Communications :: Email",
+    "Typing :: Typed",
+]
+dependencies = ["httpx>=0.23.0,<1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-cov>=4", "mypy>=1.8"]
+
+[project.urls]
+Homepage = "https://zapsmtp.com"
+Documentation = "https://zapsmtp.com/docs/sdks/"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/zapsmtp"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/zapsmtp", "README.md", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=zapsmtp --cov-branch --cov-report=term-missing:skip-covered"
+
+[tool.coverage.run]
+source = ["zapsmtp"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+files = ["src/zapsmtp"]
