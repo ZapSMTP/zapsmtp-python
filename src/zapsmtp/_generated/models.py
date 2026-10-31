@@ -1320,6 +1320,7 @@ class SendBatchResponse(BaseModel):
 class SendBatchResponseData(BaseModel):
     """The SendBatchResponseData object."""
 
+    failed_recipients: Optional[List[str]]
     id: str
     index: int
     reply_to: Optional[str]
@@ -1328,6 +1329,7 @@ class SendBatchResponseData(BaseModel):
     unconfirmed: Optional[bool]
 
     _fields = {
+        "failed_recipients": None,
         "id": None,
         "index": None,
         "reply_to": None,
@@ -1753,7 +1755,7 @@ class Template(BaseModel):
     updated_at: Optional[str]
     variable_names: Optional[List[str]]
     variable_schema: Optional[List[TemplateVariableSchema]]
-    variables: Optional[Dict[str, str]]
+    variables: Optional[Dict[str, Any]]
 
     _fields = {
         "alias": None,
@@ -1937,7 +1939,7 @@ class Thread(BaseModel):
     has_more: Optional[bool]
     id: str
     inbound_count: int
-    last_inbound_at: str
+    last_inbound_at: Optional[str]
     last_message: ThreadLastMessage
     last_message_at: str
     message_count: int

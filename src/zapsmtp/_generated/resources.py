@@ -153,7 +153,8 @@ class EmailsReceivingAttachmentsResource(SyncResource):
 
         Args:
             id: Received email id
-            limit: 1-100; when omitted or out of range all attachments are returned.
+            limit: 1-100; when omitted all attachments are returned. Limits: 422 invalid_parameter
+                otherwise.
             after: Attachment id; returns attachments after it (ignored if unknown).
             before: Attachment id; returns attachments before it (used only when after is absent).
             extra_headers: Headers sent with this request only.
@@ -243,7 +244,7 @@ class EmailsReceivingResource(SyncResource):
         Returns the first page; iterate it for every item of every page.
 
         Args:
-            limit: 1-100; out-of-range falls back to 20. Default: 20.
+            limit: 1-100. Limits: 422 invalid_parameter otherwise. Default: 20.
             before: Cursor: an email id or RFC 3339 time; returns messages received before it. An email id
                 gives an exact page boundary. Limits: 422 invalid_parameter "before must be an email id or RFC
                 3339 time"
@@ -294,7 +295,10 @@ class EmailsReceivingResource(SyncResource):
         status notification), out_of_office, auto_reply, auto_generated (notifications, null sender) or bulk
         (mailing lists). Detected from Auto-Submitted, X-Autoreply, Precedence, List-Id, multipart/report and
         well-known subjects; reason names the evidence. tls: the TLS version the sending server used (e.g.
-        TLSv1_3); empty when the message was not encrypted.
+        TLSv1_3); empty when the message was not encrypted. A message refused at SMTP (status: rejected: spam
+        or a reject route) is listed but its content was never kept: it returns the listing fields, with html,
+        text and raw null and headers empty. Its attachments, redelivery, spam reports and replies are 404;
+        DELETE erases it.
 
         Args:
             id: Received email id
@@ -813,7 +817,7 @@ class EmailsResource(SyncResource):
         Returns the first page; iterate it for every item of every page.
 
         Args:
-            limit: 1-100; out-of-range values fall back to 20. Default: 20.
+            limit: 1-100. Limits: 422 invalid_parameter otherwise. Default: 20.
             before: Cursor: an email id (UUIDv7) or RFC 3339 time; returns emails accepted before it. An
                 email id gives an exact page boundary. Limits: 422 invalid_parameter "before must be an email
                 id or RFC 3339 time"
@@ -821,12 +825,13 @@ class EmailsResource(SyncResource):
                 422 invalid_parameter "after must be an email id or RFC 3339 time"
             status: Filter by latest status. status=scheduled lists pending scheduled sends instead
                 (different item shape, ordered by scheduled time ascending, has_more always false, other
-                filters/cursors ignored).
+                filters/cursors ignored, though they must be valid).
             q: Case-insensitive substring of a recipient or subject, or an exact email id.
-            days: Look-back window in days, 1-90 (other values ignored). Always capped by the plan's log
-                retention. Default: 30.
+            days: Look-back window in days, 1-90. Always capped by the plan's log retention. Limits: 422
+                invalid_parameter otherwise. Default: 30.
             stream:
-            mode: Filter live or test-mode (sandbox) traffic; other values ignored.
+            mode: Filter live or test-mode (sandbox) traffic. Limits: 422 invalid_parameter for other
+                values.
             metadata: Exact match on a metadata value, e.g. metadata[order_id]=A-1042. Repeatable for
                 several keys.
             extra_headers: Headers sent with this request only.
@@ -1122,13 +1127,15 @@ class ThreadsResource(SyncResource):
         Returns the first page; iterate it for every item of every page.
 
         Args:
-            limit: 1-100; out-of-range falls back to 20. Default: 20.
+            limit: 1-100. Limits: 422 invalid_parameter otherwise. Default: 20.
             before: Cursor: the last_message_at of the last conversation you have (RFC 3339). Limits: 422
                 invalid_parameter otherwise.
             before_id: With before: the id of the last conversation you have, so conversations active at
                 the same instant are neither skipped nor repeated.
-            awaiting_reply: true: only conversations whose last human email came in.
-            unread: true: only conversations with an email received after their read mark.
+            awaiting_reply: true: only conversations whose last human email came in. Limits: 422
+                invalid_parameter unless true or false.
+            unread: true: only conversations with an email received after their read mark. Limits: 422
+                invalid_parameter unless true or false.
             participant: Only conversations this address took part in (case-insensitive).
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
@@ -1903,7 +1910,7 @@ class StatsResource(SyncResource):
         events (not unique emails), ordered by status name; test-mode traffic excluded.
 
         Args:
-            hours: 1-720; out-of-range falls back to 24. Default: 24.
+            hours: 1-720. Limits: 422 invalid_parameter otherwise. Default: 24.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -1930,8 +1937,8 @@ class StatsResource(SyncResource):
         empty buckets are not emitted. Test-mode traffic excluded.
 
         Args:
-            hours: 1-720; out-of-range falls back to 24. Bucket size: <=1h → 60 s, <=6h → 300 s, <=24h →
-                1800 s, <=168h → 10800 s, otherwise 43200 s. Default: 24.
+            hours: 1-720 (422 invalid_parameter otherwise). Bucket size: <=1h → 60 s, <=6h → 300 s, <=24h
+                → 1800 s, <=168h → 10800 s, otherwise 43200 s. Default: 24.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -1959,7 +1966,7 @@ class StatsResource(SyncResource):
         least once.
 
         Args:
-            hours: 1-720; out-of-range falls back to 24. Default: 24.
+            hours: 1-720. Limits: 422 invalid_parameter otherwise. Default: 24.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -2262,7 +2269,7 @@ class DomainsResource(SyncResource):
 
         Args:
             id: Domain id.
-            days: 1-180; out-of-range falls back to 30. Default: 30.
+            days: 1-180. Limits: 422 invalid_parameter otherwise. Default: 30.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -3635,7 +3642,7 @@ class SuppressionsResource(SyncResource):
         Returns the first page; iterate it for every item of every page.
 
         Args:
-            limit: 1-1000; out-of-range falls back to 100. Default: 100.
+            limit: 1-1000. Limits: 422 invalid_parameter otherwise. Default: 100.
             after: Opaque cursor from next_cursor. Limits: 422 invalid_parameter "invalid after cursor"
             before: Legacy: RFC 3339 timestamp; returns entries created before it. Ignored when after is
                 set. Limits: 422 invalid_parameter "before must be RFC3339"
@@ -3886,7 +3893,7 @@ class LogsResource(SyncResource):
         Returns the first page; iterate it for every item of every page.
 
         Args:
-            limit: 1–100. Default: 20.
+            limit: 1–100. Limits: 422 invalid_parameter otherwise. Default: 20.
             before: A log id: return older entries.
             after: A log id: return newer entries.
             status: An exact status (422) or a class: 2xx, 4xx, 5xx.
