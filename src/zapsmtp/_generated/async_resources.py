@@ -1984,7 +1984,7 @@ class AsyncStatsResource(AsyncResource):
         *,
         from_: Union[str, NotGiven] = NOT_GIVEN,
         to: Union[str, NotGiven] = NOT_GIVEN,
-        granularity: Union[str, NotGiven] = NOT_GIVEN,
+        granularity: Union[Literal["hour", "day"], NotGiven] = NOT_GIVEN,
         dimension: Union[str, NotGiven] = NOT_GIVEN,
         domain: Union[str, NotGiven] = NOT_GIVEN,
         stream: Union[str, NotGiven] = NOT_GIVEN,
