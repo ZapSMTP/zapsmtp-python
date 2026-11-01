@@ -150,6 +150,7 @@ class SendEmailParams(_SendEmailParamsRequired, _SendEmailParamsOptional):
             a value of the wrong type → 422 template_variables_invalid; a required variable without value or
             default → 422 template_variables_missing; anything else the template uses still absent → 422
             template_render_error "missing template variables: a, b"
-        tls: required or verified: deliver only over TLS (verified: with a valid certificate for the receiving
-            server). Raises the domain's policy, never lowers it.
+        tls: opportunistic, required or verified: required delivers only over TLS, verified only with a valid
+            certificate for the receiving server. The stricter of this and the domain’s policy applies: it raises
+            the domain’s policy, never lowers it.
     """

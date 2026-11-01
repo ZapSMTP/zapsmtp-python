@@ -169,11 +169,12 @@ built-ins of the same name: refer to them through the module.
 
 ## Retries and timeouts
 
-A request that failed on the way (408, 429, 5xx, a lost connection, a timeout) is tried again twice by
+A request that failed on the way (408, 429, 500, 502, 503, 504, a lost connection, a timeout) is tried again twice by
 default, waiting as the API's `Retry-After` says (up to 60 s) or backing off exponentially (0.5 s, 1 s,
 2 s, ... up to 8 s, with jitter). Only requests that are safe to repeat are retried: reads, `PUT`s,
 deletes, and sends, which always carry an `Idempotency-Key`. Other `POST` and `PATCH` requests are
-retried only on 429. Quota errors (`monthly_quota_exceeded`, `daily_quota_exceeded`) are not retried.
+retried only on 429. Quota errors (`monthly_quota_exceeded`, `daily_quota_exceeded`) and `thread_reply_limit` are not retried;
+a 409 `idempotency_request_in_progress` is.
 
 Pass your own key to make retries of your own safe too:
 

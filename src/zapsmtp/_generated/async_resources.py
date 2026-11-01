@@ -433,6 +433,7 @@ class AsyncEmailsReceivingResource(AsyncResource):
         tracking: Union[Tracking, NotGiven] = NOT_GIVEN,
         template: Union[TemplateRef, NotGiven] = NOT_GIVEN,
         scheduled_at: Union[str, NotGiven] = NOT_GIVEN,
+        tls: Union[str, NotGiven] = NOT_GIVEN,
         idempotency_key: Optional[str] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         timeout: Union[float, None, NotGiven] = NOT_GIVEN,
@@ -495,6 +496,9 @@ class AsyncEmailsReceivingResource(AsyncResource):
                 min|mins|minute|minutes|h|hour|hours|d|day|days. Times in the past send immediately. Limits:
                 unparsable → 422 invalid_parameter; more than 7 days ahead → 422 invalid_parameter
                 "scheduled_at must be within 7 days"
+            tls: opportunistic, required or verified: required delivers only over TLS, verified only with
+                a valid certificate for the receiving server. The stricter of this and the domain’s policy
+                applies: it raises the domain’s policy, never lowers it.
             idempotency_key: Sent as Idempotency-Key, so retries never do the work twice (default: a
                 random UUID, the same for every retry).
             extra_headers: Headers sent with this request only.
@@ -525,6 +529,7 @@ class AsyncEmailsReceivingResource(AsyncResource):
                 "tracking": tracking,
                 "template": template,
                 "scheduled_at": scheduled_at,
+                "tls": tls,
             },
             idempotent=True,
             cast=SendEmailResponse,
@@ -720,8 +725,9 @@ class AsyncEmailsResource(AsyncResource):
                 invalid_parameter (reserved); a value of the wrong type → 422 template_variables_invalid; a
                 required variable without value or default → 422 template_variables_missing; anything else the
                 template uses still absent → 422 template_render_error "missing template variables: a, b"
-            tls: required or verified: deliver only over TLS (verified: with a valid certificate for the
-                receiving server). Raises the domain's policy, never lowers it.
+            tls: opportunistic, required or verified: required delivers only over TLS, verified only with
+                a valid certificate for the receiving server. The stricter of this and the domain’s policy
+                applies: it raises the domain’s policy, never lowers it.
             idempotency_key: Sent as Idempotency-Key, so retries never do the work twice (default: a
                 random UUID, the same for every retry).
             extra_headers: Headers sent with this request only.
