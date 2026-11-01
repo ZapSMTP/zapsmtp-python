@@ -8,7 +8,115 @@ from typing import Any, Dict, List, Optional
 from .._models import BaseModel
 from .params import WebhookFilter
 
-__all__ = ["Action", "ApiKey", "Attachment", "Brand", "BrandBimiRecord", "BrandCheck", "BrandDmarc", "BrandDmarcRecord", "BrandProviders", "CreatedApiKey", "CreatedApiKeyKey", "DedicatedIp", "DedicatedIpBlocklist", "Deleted", "DmarcSummary", "DmarcSummaryRecord", "DmarcSummaryReporter", "DmarcSummarySeries", "DmarcSummarySource", "DmarcSummaryTotals", "Domain", "DomainRecord", "DomainReputation", "DomainReputationEvent", "DomainReputationList", "Email", "EmailContent", "EmailEvent", "EmailRecipient", "EmailShare", "ForwardDestination", "InboundDomain", "InboundDomainCheck", "InboundDomainCheckDomain", "InboundDomainCheckDomainRecord", "InboundDomainRecord", "InboundRoute", "InboundStats", "Log", "Metrics", "MetricsGroup", "MetricsSeries", "MetricsTotals", "ReceivedEmail", "ReceivedEmailAction", "ReceivedEmailAttachment", "ReceivedEmailAuthentication", "ReceivedEmailAutomated", "ReceivedEmailEnvelope", "ReceivedEmailRaw", "ReceivedEmailSpam", "RenderedTemplate", "SendBatchResponse", "SendBatchResponseData", "SendBatchResponseError", "SendEmailResponse", "Simulator", "SimulatorScenario", "SmtpCredential", "SmtpCredentialList", "SmtpCredentialListData", "SmtpCredentialListSettings", "SmtpCredentialSettings", "SpamCheck", "SpamCheckEngine", "SpamCheckEngineRule", "SpamCheckIssue", "Stats", "StatsBreakdown", "StatsBreakdownBounce", "StatsBreakdownEngagement", "StatsBreakdownProvider", "StatsBreakdownTopLink", "StatsData", "StatsTimeseries", "StatsTimeseriesData", "Suppression", "SuppressionBatch", "Template", "TemplateAsset", "TemplateModule", "TemplatePublished", "TemplatePublishedVariableSchema", "TemplateTimer", "TemplateVariableSchema", "TemplateVersion", "Thread", "ThreadData", "ThreadLastMessage", "Usage", "UsagePlan", "Variable", "VariableTemplate", "Webhook", "WebhookDelivery", "WebhookEventRecord", "WebhookEventRecordAttemptList", "WebhookTestResult", "WebhookTestResultDelivery"]
+__all__ = ["AccountInfo", "AccountPlan", "AccountProfile", "AccountSmtp", "AccountUsage", "Action", "ApiKey", "Attachment", "Brand", "BrandBimiRecord", "BrandCheck", "BrandDmarc", "BrandDmarcRecord", "BrandProviders", "CreatedApiKey", "CreatedApiKeyKey", "DedicatedIp", "DedicatedIpBlocklist", "Deleted", "DmarcSummary", "DmarcSummaryRecord", "DmarcSummaryReporter", "DmarcSummarySeries", "DmarcSummarySource", "DmarcSummaryTotals", "Domain", "DomainRecord", "DomainReputation", "DomainReputationEvent", "DomainReputationList", "Email", "EmailContent", "EmailEvent", "EmailRecipient", "EmailShare", "ForwardDestination", "InboundDomain", "InboundDomainCheck", "InboundDomainCheckDomain", "InboundDomainCheckDomainRecord", "InboundDomainRecord", "InboundRoute", "InboundStats", "Log", "Metrics", "MetricsGroup", "MetricsSeries", "MetricsTotals", "ReceivedEmail", "ReceivedEmailAction", "ReceivedEmailAttachment", "ReceivedEmailAuthentication", "ReceivedEmailAutomated", "ReceivedEmailEnvelope", "ReceivedEmailRaw", "ReceivedEmailSpam", "RenderedTemplate", "SendBatchResponse", "SendBatchResponseData", "SendBatchResponseError", "SendEmailResponse", "Simulator", "SimulatorScenario", "SmtpCredential", "SmtpCredentialList", "SmtpCredentialListData", "SmtpCredentialListSettings", "SmtpCredentialSettings", "SpamCheck", "SpamCheckEngine", "SpamCheckEngineRule", "SpamCheckIssue", "Stats", "StatsBreakdown", "StatsBreakdownBounce", "StatsBreakdownEngagement", "StatsBreakdownProvider", "StatsBreakdownTopLink", "StatsData", "StatsTimeseries", "StatsTimeseriesData", "Suppression", "SuppressionBatch", "Template", "TemplateAsset", "TemplateModule", "TemplatePublished", "TemplatePublishedVariableSchema", "TemplateTimer", "TemplateVariableSchema", "TemplateVersion", "Thread", "ThreadData", "ThreadLastMessage", "Usage", "UsagePlan", "Variable", "VariableTemplate", "Webhook", "WebhookDelivery", "WebhookEventRecord", "WebhookEventRecordAttemptList", "WebhookTestResult", "WebhookTestResultDelivery"]
+
+
+class AccountInfo(BaseModel):
+    """The AccountInfo object."""
+
+    account: AccountProfile
+    object: Optional[str]
+    plan: AccountPlan
+    smtp: AccountSmtp
+    usage: AccountUsage
+
+    _fields = {
+        "account": ("ref", "AccountProfile"),
+        "object": None,
+        "plan": ("ref", "AccountPlan"),
+        "smtp": ("ref", "AccountSmtp"),
+        "usage": ("ref", "AccountUsage"),
+    }
+
+
+class AccountPlan(BaseModel):
+    """The AccountPlan object."""
+
+    daily_emails: int
+    id: str
+    included_emails: int
+    max_domains: int
+    max_smtp_credentials: int
+    name: str
+    overage_cents_per_1000: int
+    price_cents: int
+    retention_days: int
+    smtp_relay: Optional[bool]
+    tier: str
+
+    _fields = {
+        "daily_emails": None,
+        "id": None,
+        "included_emails": None,
+        "max_domains": None,
+        "max_smtp_credentials": None,
+        "name": None,
+        "overage_cents_per_1000": None,
+        "price_cents": None,
+        "retention_days": None,
+        "smtp_relay": None,
+        "tier": None,
+    }
+
+
+class AccountProfile(BaseModel):
+    """The AccountProfile object."""
+
+    created_at: str
+    current_period_end: Optional[str]
+    dedicated_ips: int
+    id: str
+    monthly_quota: int
+    name: str
+    plan: str
+    rate_limit_per_sec: float
+    spend_cap_cents: Optional[int]
+    status: str
+    subscription_status: str
+
+    _fields = {
+        "created_at": None,
+        "current_period_end": None,
+        "dedicated_ips": None,
+        "id": None,
+        "monthly_quota": None,
+        "name": None,
+        "plan": None,
+        "rate_limit_per_sec": None,
+        "spend_cap_cents": None,
+        "status": None,
+        "subscription_status": None,
+    }
+
+
+class AccountSmtp(BaseModel):
+    """The AccountSmtp object."""
+
+    host: str
+    password: str
+    ports: List[int]
+    username: str
+
+    _fields = {
+        "host": None,
+        "password": None,
+        "ports": None,
+        "username": None,
+    }
+
+
+class AccountUsage(BaseModel):
+    """The AccountUsage object."""
+
+    month: str
+    monthly_quota: int
+    sent: int
+
+    _fields = {
+        "month": None,
+        "monthly_quota": None,
+        "sent": None,
+    }
 
 
 class Action(BaseModel):

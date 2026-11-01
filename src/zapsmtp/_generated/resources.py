@@ -14,6 +14,7 @@ from .._utils import FileContent, multipart_form
 from .._webhooks import Headers as WebhookHeaders
 from .._webhooks import WebhookEvent, verify_webhook, verify_webhook_events
 from .models import (
+    AccountInfo,
     Action,
     ApiKey,
     Attachment,
@@ -67,6 +68,8 @@ if TYPE_CHECKING:
     from .._base_client import SyncAPIClient
 
 __all__ = [
+    "AccountResource",
+    "AccountResourceWithResponse",
     "ActionsResource",
     "ActionsResourceWithResponse",
     "ApiKeysResource",
@@ -3996,6 +3999,76 @@ class UsageResourceWithResponse:
 
     def __init__(self, resource: UsageResource) -> None:
         self.get = to_response(resource.get)
+
+
+class AccountResource(SyncResource):
+    """account: operations of client.account."""
+
+    @property
+    def with_response(self) -> AccountResourceWithResponse:
+        """These operations, returning an APIResponse: the result with the status, headers and request id."""
+        return AccountResourceWithResponse(self)
+
+    def get(
+        self,
+        *,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> AccountInfo:
+        """Retrieve the account.
+
+        The account the key belongs to: its name, status and sending rate limit, the plan with its limits,
+        this month’s sent count and the SMTP relay settings. Requires a full-access key. spend_cap_cents is
+        null without a spending cap. For the month’s overage and limit use GET /usage. Plan changes and
+        payments are made in the dashboard, never with an API key.
+
+        Args:
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return self._client._request(
+            "GET",
+            "/account",
+            cast=AccountInfo,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+    def update(
+        self,
+        *,
+        name: str,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> AccountInfo:
+        """Rename the account.
+
+        Rename the account. Answers the account as GET /account does. Requires a full-access live key; test
+        keys get 403 test_key_restricted.
+
+        Args:
+            name: 1–100 characters.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return self._client._request(
+            "PATCH",
+            "/account",
+            body={"name": name},
+            cast=AccountInfo,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+
+class AccountResourceWithResponse:
+    """client.account.with_response: each operation returns an APIResponse."""
+
+    def __init__(self, resource: AccountResource) -> None:
+        self.get = to_response(resource.get)
+        self.update = to_response(resource.update)
 
 
 class TemplateModulesResource(SyncResource):

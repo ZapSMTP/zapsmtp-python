@@ -9,6 +9,7 @@ import httpx
 
 from .._base_client import DEFAULT_MAX_RETRIES, DEFAULT_TIMEOUT, AsyncAPIClient, SyncAPIClient
 from .async_resources import (
+    AsyncAccountResource,
     AsyncActionsResource,
     AsyncApiKeysResource,
     AsyncDedicatedIpsResource,
@@ -30,6 +31,7 @@ from .async_resources import (
     AsyncWebhooksResource,
 )
 from .resources import (
+    AccountResource,
     ActionsResource,
     ApiKeysResource,
     DedicatedIpsResource,
@@ -85,6 +87,7 @@ class ZapSMTP(SyncAPIClient):
     dedicated_ips: DedicatedIpsResource
     logs: LogsResource
     usage: UsageResource
+    account: AccountResource
     template_modules: TemplateModulesResource
     template_assets: TemplateAssetsResource
     template_timers: TemplateTimersResource
@@ -123,6 +126,7 @@ class ZapSMTP(SyncAPIClient):
         self.dedicated_ips = DedicatedIpsResource(self)
         self.logs = LogsResource(self)
         self.usage = UsageResource(self)
+        self.account = AccountResource(self)
         self.template_modules = TemplateModulesResource(self)
         self.template_assets = TemplateAssetsResource(self)
         self.template_timers = TemplateTimersResource(self)
@@ -161,6 +165,7 @@ class AsyncZapSMTP(AsyncAPIClient):
     dedicated_ips: AsyncDedicatedIpsResource
     logs: AsyncLogsResource
     usage: AsyncUsageResource
+    account: AsyncAccountResource
     template_modules: AsyncTemplateModulesResource
     template_assets: AsyncTemplateAssetsResource
     template_timers: AsyncTemplateTimersResource
@@ -199,6 +204,7 @@ class AsyncZapSMTP(AsyncAPIClient):
         self.dedicated_ips = AsyncDedicatedIpsResource(self)
         self.logs = AsyncLogsResource(self)
         self.usage = AsyncUsageResource(self)
+        self.account = AsyncAccountResource(self)
         self.template_modules = AsyncTemplateModulesResource(self)
         self.template_assets = AsyncTemplateAssetsResource(self)
         self.template_timers = AsyncTemplateTimersResource(self)
