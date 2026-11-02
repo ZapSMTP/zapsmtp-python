@@ -53,9 +53,12 @@ class Tracking(TypedDict, total=False):
 
 
 class WebhookFilter(TypedDict, total=False):
-    """Narrows email.clicked to some click actions."""
+    """Narrows what an endpoint receives: email.clicked (and email.clicked_unique) to some click actions, every
+    event to some domains.
+    """
 
     actions: Sequence[str]
+    domains: Sequence[str]
 
 
 class _VariableSpecRequired(TypedDict):

@@ -2872,15 +2872,16 @@ class WebhooksResource(SyncResource):
             url: Absolute https:// URL. Limits: 422 invalid_parameter "url must be an absolute https://
                 URL"
             events: Limits: unknown type → 422 invalid_parameter "unknown event type <x>; allowed: ..."
-                Default: all event types.
+                Default: every type except email.opened_unique and email.clicked_unique.
             include_content: email.received carries the message: text, html, headers, and download links
                 (valid 24 hours) for the attachments and the raw .eml; text and html are cut at 1 MB in total
                 (truncated: true). Default: false.
             batch: Send events up to 100 per request (or every second) as a JSON array, signed as one
                 body; Zap-Event-Id is the batch id, each event keeps its own id. email.received with the full
                 message still arrives alone. Default: false.
-            filter: Narrows email.clicked to some click actions; other event types are not affected. Empty
-                or absent: every click. Default: {"actions": []}.
+            filter: Narrows what the endpoint receives: actions narrows email.clicked (and
+                email.clicked_unique) to some click actions; domains narrows every event to some domains.
+                Empty or absent: every click, every domain. Default: {"actions": [], "domains": []}.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -2957,8 +2958,10 @@ class WebhooksResource(SyncResource):
             batch: Send events up to 100 per request (or every second) as a JSON array, signed as one
                 body; Zap-Event-Id is the batch id, each event keeps its own id. email.received with the full
                 message still arrives alone. Default: false.
-            filter: Narrows email.clicked to some click actions; other event types are not affected. Empty
-                or absent: every click. Replaces the whole filter; {"actions": []} removes it.
+            filter: Narrows what the endpoint receives: actions narrows email.clicked (and
+                email.clicked_unique) to some click actions; domains narrows every event to some domains.
+                Empty or absent: every click, every domain. A list you leave out keeps its value; an empty
+                list clears it: {"actions": []} lets every click through, {"domains": []} every domain.
             extra_headers: Headers sent with this request only.
             timeout: Seconds this request may take per attempt (default: the client's).
             max_retries: Retries of this request (default: the client's).
@@ -3008,7 +3011,7 @@ class WebhooksResource(SyncResource):
         self,
         id: str,
         *,
-        type: Union[Literal["email.sent", "email.delivered", "email.delivery_delayed", "email.bounced", "email.complained", "email.failed", "email.opened", "email.clicked", "email.suppressed", "email.received", "thread.created", "thread.replied", "email.replied"], NotGiven] = NOT_GIVEN,
+        type: Union[Literal["email.sent", "email.delivered", "email.delivery_delayed", "email.bounced", "email.complained", "email.failed", "email.opened", "email.clicked", "email.suppressed", "email.received", "thread.created", "thread.replied", "email.replied", "email.opened_unique", "email.clicked_unique", "email.unsubscribed", "email.forward_failed", "domain.verified", "domain.reputation_changed", "email.scheduled", "suppression.added", "suppression.removed", "domain.created", "domain.deleted"], NotGiven] = NOT_GIVEN,
         extra_headers: Optional[Mapping[str, str]] = None,
         timeout: Union[float, None, NotGiven] = NOT_GIVEN,
         max_retries: Optional[int] = None,
