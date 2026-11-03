@@ -14,9 +14,11 @@ from .async_resources import (
     AsyncApiKeysResource,
     AsyncDedicatedIpsResource,
     AsyncDomainsResource,
+    AsyncEmailValidationsResource,
     AsyncEmailsResource,
     AsyncInboundResource,
     AsyncLogsResource,
+    AsyncPlacementTestsResource,
     AsyncSimulatorResource,
     AsyncSmtpCredentialsResource,
     AsyncStatsResource,
@@ -36,9 +38,11 @@ from .resources import (
     ApiKeysResource,
     DedicatedIpsResource,
     DomainsResource,
+    EmailValidationsResource,
     EmailsResource,
     InboundResource,
     LogsResource,
+    PlacementTestsResource,
     SimulatorResource,
     SmtpCredentialsResource,
     StatsResource,
@@ -93,6 +97,8 @@ class ZapSMTP(SyncAPIClient):
     template_timers: TemplateTimersResource
     actions: ActionsResource
     variables: VariablesResource
+    email_validations: EmailValidationsResource
+    placement_tests: PlacementTestsResource
 
     def __init__(
         self,
@@ -132,6 +138,8 @@ class ZapSMTP(SyncAPIClient):
         self.template_timers = TemplateTimersResource(self)
         self.actions = ActionsResource(self)
         self.variables = VariablesResource(self)
+        self.email_validations = EmailValidationsResource(self)
+        self.placement_tests = PlacementTestsResource(self)
 
 
 class AsyncZapSMTP(AsyncAPIClient):
@@ -171,6 +179,8 @@ class AsyncZapSMTP(AsyncAPIClient):
     template_timers: AsyncTemplateTimersResource
     actions: AsyncActionsResource
     variables: AsyncVariablesResource
+    email_validations: AsyncEmailValidationsResource
+    placement_tests: AsyncPlacementTestsResource
 
     def __init__(
         self,
@@ -210,3 +220,5 @@ class AsyncZapSMTP(AsyncAPIClient):
         self.template_timers = AsyncTemplateTimersResource(self)
         self.actions = AsyncActionsResource(self)
         self.variables = AsyncVariablesResource(self)
+        self.email_validations = AsyncEmailValidationsResource(self)
+        self.placement_tests = AsyncPlacementTestsResource(self)

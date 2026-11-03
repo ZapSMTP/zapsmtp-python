@@ -28,6 +28,8 @@ from .models import (
     Email,
     EmailContent,
     EmailShare,
+    EmailValidation,
+    EmailValidationList,
     ForwardDestination,
     InboundDomain,
     InboundDomainCheck,
@@ -35,6 +37,7 @@ from .models import (
     InboundStats,
     Log,
     Metrics,
+    PlacementTest,
     ReceivedEmail,
     ReceivedEmailAction,
     RenderedTemplate,
@@ -78,6 +81,8 @@ __all__ = [
     "AsyncDedicatedIpsResourceWithResponse",
     "AsyncDomainsResource",
     "AsyncDomainsResourceWithResponse",
+    "AsyncEmailValidationsResource",
+    "AsyncEmailValidationsResourceWithResponse",
     "AsyncEmailsAttachmentsResource",
     "AsyncEmailsAttachmentsResourceWithResponse",
     "AsyncEmailsReceivingAttachmentsResource",
@@ -96,6 +101,8 @@ __all__ = [
     "AsyncInboundRoutesResourceWithResponse",
     "AsyncLogsResource",
     "AsyncLogsResourceWithResponse",
+    "AsyncPlacementTestsResource",
+    "AsyncPlacementTestsResourceWithResponse",
     "AsyncSimulatorResource",
     "AsyncSimulatorResourceWithResponse",
     "AsyncSmtpCredentialsResource",
@@ -4748,3 +4755,224 @@ class AsyncVariablesResourceWithResponse:
         self.list = async_to_response(resource.list)
         self.set_global = async_to_response(resource.set_global)
         self.delete_global = async_to_response(resource.delete_global)
+
+
+class AsyncEmailValidationsResource(AsyncResource):
+    """emailValidations: operations of client.email_validations."""
+
+    @property
+    def with_response(self) -> AsyncEmailValidationsResourceWithResponse:
+        """These operations, returning an APIResponse: the result with the status, headers and request id."""
+        return AsyncEmailValidationsResourceWithResponse(self)
+
+    async def create(
+        self,
+        *,
+        email: str,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> EmailValidation:
+        """Validate an address.
+
+        Check one address before you send to it: syntax, the domain and its mail servers, throw-away and role
+        addresses, typos, your suppression list and earlier hard bounces. Any API key; test keys too (nothing
+        is sent or changed). result: deliverable (every check passed), risky (it may arrive, but sending to it
+        can hurt your reputation), undeliverable (it will bounce) or unknown (the domain's DNS did not answer:
+        try again later). reason is the most serious of reasons: invalid_syntax, reserved_domain,
+        domain_not_found, no_mail_server, mailbox_not_found, previously_bounced (hard bounced on ZapSMTP in
+        the last 180 days), dns_error, suppressed (on your suppression list), disposable, accept_all,
+        role_address; ok when there is none. checks.mailbox is exists, not_found, unknown or not_checked.
+        Nothing is ever sent to the address. did_you_mean suggests a likely intended address when the domain
+        looks like a typo. Each address counts against your plan's monthly validations (Free 100, Pro 5,000,
+        Scale 25,000); over it: 429 monthly_quota_exceeded. Results are not stored.
+
+        Args:
+            email: The address to check.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return await self._client._request(
+            "POST",
+            "/email-validations",
+            body={"email": email},
+            cast=EmailValidation,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+    async def create_batch(
+        self,
+        *,
+        emails: Sequence[str],
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> EmailValidationList:
+        """Validate up to 100 addresses.
+
+        Check up to 100 addresses in one call; results come back in the order given. Any API key; test keys
+        too (nothing is sent or changed). Each address counts against the plan's monthly validations; a batch
+        that would pass the allowance is refused whole.
+
+        Args:
+            emails: 1–100 addresses, each at most 320 characters.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return await self._client._request(
+            "POST",
+            "/email-validations/batch",
+            body={"emails": emails},
+            cast=EmailValidationList,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+
+class AsyncEmailValidationsResourceWithResponse:
+    """client.email_validations.with_response: each operation returns an APIResponse."""
+
+    def __init__(self, resource: AsyncEmailValidationsResource) -> None:
+        self.create = async_to_response(resource.create)
+        self.create_batch = async_to_response(resource.create_batch)
+
+
+class AsyncPlacementTestsResource(AsyncResource):
+    """placementTests: operations of client.placement_tests."""
+
+    @property
+    def with_response(self) -> AsyncPlacementTestsResourceWithResponse:
+        """These operations, returning an APIResponse: the result with the status, headers and request id."""
+        return AsyncPlacementTestsResourceWithResponse(self)
+
+    async def create(
+        self,
+        *,
+        from_: Union[str, NotGiven] = NOT_GIVEN,
+        subject: Union[str, NotGiven] = NOT_GIVEN,
+        html: Union[str, NotGiven] = NOT_GIVEN,
+        text: Union[str, NotGiven] = NOT_GIVEN,
+        template: Union[TemplateRef, NotGiven] = NOT_GIVEN,
+        headers: Union[Mapping[str, str], NotGiven] = NOT_GIVEN,
+        tags: Union[Sequence[Tag], NotGiven] = NOT_GIVEN,
+        stream: Union[str, NotGiven] = NOT_GIVEN,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> PlacementTest:
+        """Start a placement test.
+
+        Start an inbox placement test: see whether a message lands in the inbox, a Gmail tab or spam at the
+        big mailbox providers. Requires a full-access live key; test keys get 403 test_key_restricted. With a
+        message (from and content, or a template) one copy goes to each seed mailbox through your account,
+        like any send (each counts as a sent email; test keys cannot). Without one the test is manual: send
+        your message to every address in results from anywhere, with token in the subject or text, within 2
+        hours. ZapSMTP then reads each seed mailbox (Gmail, Outlook, Yahoo and others) and records where the
+        copy landed: inbox, a Gmail tab (promotions, social, updates, forums), spam, or missing once the test
+        ends (15 minutes after a send). auth is the provider's own SPF, DKIM and DMARC verdict. status is
+        running until every seed has an answer or the test ends, then done. summary.inbox_rate = inbox (any
+        tab) / seeds with an answer. Your plan includes a number of tests a month (Free 1, Pro 10, Scale 50);
+        over it: 429 monthly_quota_exceeded.
+
+        Args:
+            from_: Sender on one of your verified domains. Leave out (with template) for a manual test.
+                Sent as "from".
+            subject: As in Send an email.
+            html: As in Send an email.
+            text: As in Send an email.
+            template: A stored template and its variables, as in Send an email.
+            headers: Extra headers, as in Send an email.
+            tags: As in Send an email.
+            stream: As in Send an email.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return await self._client._request(
+            "POST",
+            "/placement-tests",
+            body={
+                "from": from_,
+                "subject": subject,
+                "html": html,
+                "text": text,
+                "template": template,
+                "headers": headers,
+                "tags": tags,
+                "stream": stream,
+            },
+            cast=PlacementTest,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+    async def get(
+        self,
+        id: str,
+        *,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> PlacementTest:
+        """Retrieve a placement test.
+
+        Retrieve a placement test with where each copy landed. Requires a full-access key. ZapSMTP then reads
+        each seed mailbox (Gmail, Outlook, Yahoo and others) and records where the copy landed: inbox, a Gmail
+        tab (promotions, social, updates, forums), spam, or missing once the test ends (15 minutes after a
+        send). auth is the provider's own SPF, DKIM and DMARC verdict. status is running until every seed has
+        an answer or the test ends, then done. summary.inbox_rate = inbox (any tab) / seeds with an answer.
+
+        Args:
+            id: The test id.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return await self._client._request(
+            "GET",
+            "/placement-tests/{id}",
+            path_params={"id": id},
+            cast=PlacementTest,
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+    def list(
+        self,
+        *,
+        limit: Union[int, NotGiven] = NOT_GIVEN,
+        after: Union[str, NotGiven] = NOT_GIVEN,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        timeout: Union[float, None, NotGiven] = NOT_GIVEN,
+        max_retries: Optional[int] = None,
+    ) -> AsyncPageRequest[PlacementTest]:
+        """List placement tests.
+
+        List placement tests, newest first, with cursor pagination. Requires a full-access key. Pass
+        next_cursor as after for the next page.
+
+        Await it for the first page, or `async for` over it for every item of every page.
+
+        Args:
+            limit: 1-100. Limits: 422 invalid_parameter otherwise. Default: 20.
+            after: A test id from next_cursor. Limits: 422 invalid_parameter otherwise.
+            extra_headers: Headers sent with this request only.
+            timeout: Seconds this request may take per attempt (default: the client's).
+            max_retries: Retries of this request (default: the client's).
+        """
+        return self._client._request_page(
+            "GET",
+            "/placement-tests",
+            query={"limit": limit, "after": after},
+            cast=PlacementTest,
+            paging="cursor",
+            options=RequestOptions(extra_headers=extra_headers, timeout=timeout, max_retries=max_retries),
+        )
+
+
+class AsyncPlacementTestsResourceWithResponse:
+    """client.placement_tests.with_response: each operation returns an APIResponse."""
+
+    def __init__(self, resource: AsyncPlacementTestsResource) -> None:
+        self.create = async_to_response(resource.create)
+        self.get = async_to_response(resource.get)
+        self.list = async_to_response(resource.list)

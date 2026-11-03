@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from .._models import BaseModel
 from .params import WebhookFilter
 
-__all__ = ["AccountInfo", "AccountPlan", "AccountProfile", "AccountSmtp", "AccountUsage", "Action", "ApiKey", "Attachment", "Brand", "BrandBimiRecord", "BrandCheck", "BrandDmarc", "BrandDmarcRecord", "BrandProviders", "CreatedApiKey", "CreatedApiKeyKey", "DedicatedIp", "DedicatedIpBlocklist", "Deleted", "DmarcSummary", "DmarcSummaryRecord", "DmarcSummaryReporter", "DmarcSummarySeries", "DmarcSummarySource", "DmarcSummaryTotals", "Domain", "DomainRecord", "DomainReputation", "DomainReputationEvent", "DomainReputationList", "Email", "EmailContent", "EmailEvent", "EmailRecipient", "EmailShare", "ForwardDestination", "InboundDomain", "InboundDomainCheck", "InboundDomainCheckDomain", "InboundDomainCheckDomainRecord", "InboundDomainRecord", "InboundRoute", "InboundStats", "Log", "Metrics", "MetricsGroup", "MetricsSeries", "MetricsTotals", "ReceivedEmail", "ReceivedEmailAction", "ReceivedEmailAttachment", "ReceivedEmailAuthentication", "ReceivedEmailAutomated", "ReceivedEmailEnvelope", "ReceivedEmailRaw", "ReceivedEmailSpam", "RenderedTemplate", "SendBatchResponse", "SendBatchResponseData", "SendBatchResponseError", "SendEmailResponse", "Simulator", "SimulatorScenario", "SmtpCredential", "SmtpCredentialList", "SmtpCredentialListData", "SmtpCredentialListSettings", "SmtpCredentialSettings", "SpamCheck", "SpamCheckEngine", "SpamCheckEngineRule", "SpamCheckIssue", "Stats", "StatsBreakdown", "StatsBreakdownBounce", "StatsBreakdownEngagement", "StatsBreakdownProvider", "StatsBreakdownTopLink", "StatsData", "StatsTimeseries", "StatsTimeseriesData", "Suppression", "SuppressionBatch", "Template", "TemplateAsset", "TemplateModule", "TemplatePublished", "TemplatePublishedVariableSchema", "TemplateTimer", "TemplateVariableSchema", "TemplateVersion", "Thread", "ThreadData", "ThreadLastMessage", "Usage", "UsagePlan", "Variable", "VariableTemplate", "Webhook", "WebhookDelivery", "WebhookEventRecord", "WebhookEventRecordAttemptList", "WebhookTestResult", "WebhookTestResultDelivery"]
+__all__ = ["AccountInfo", "AccountPlan", "AccountProfile", "AccountSmtp", "AccountUsage", "Action", "ApiKey", "Attachment", "Brand", "BrandBimiRecord", "BrandCheck", "BrandDmarc", "BrandDmarcRecord", "BrandProviders", "CreatedApiKey", "CreatedApiKeyKey", "DedicatedIp", "DedicatedIpBlocklist", "Deleted", "DmarcSummary", "DmarcSummaryRecord", "DmarcSummaryReporter", "DmarcSummarySeries", "DmarcSummarySource", "DmarcSummaryTotals", "Domain", "DomainRecord", "DomainReputation", "DomainReputationEvent", "DomainReputationList", "Email", "EmailContent", "EmailEvent", "EmailRecipient", "EmailShare", "EmailValidation", "EmailValidationChecks", "EmailValidationList", "ForwardDestination", "InboundDomain", "InboundDomainCheck", "InboundDomainCheckDomain", "InboundDomainCheckDomainRecord", "InboundDomainRecord", "InboundRoute", "InboundStats", "Log", "Metrics", "MetricsGroup", "MetricsSeries", "MetricsTotals", "PlacementAuth", "PlacementResult", "PlacementSummary", "PlacementTest", "ReceivedEmail", "ReceivedEmailAction", "ReceivedEmailAttachment", "ReceivedEmailAuthentication", "ReceivedEmailAutomated", "ReceivedEmailEnvelope", "ReceivedEmailRaw", "ReceivedEmailSpam", "RenderedTemplate", "SendBatchResponse", "SendBatchResponseData", "SendBatchResponseError", "SendEmailResponse", "Simulator", "SimulatorScenario", "SmtpCredential", "SmtpCredentialList", "SmtpCredentialListData", "SmtpCredentialListSettings", "SmtpCredentialSettings", "SpamCheck", "SpamCheckEngine", "SpamCheckEngineRule", "SpamCheckIssue", "Stats", "StatsBreakdown", "StatsBreakdownBounce", "StatsBreakdownEngagement", "StatsBreakdownProvider", "StatsBreakdownTopLink", "StatsData", "StatsTimeseries", "StatsTimeseriesData", "Suppression", "SuppressionBatch", "Template", "TemplateAsset", "TemplateModule", "TemplatePublished", "TemplatePublishedVariableSchema", "TemplateTimer", "TemplateVariableSchema", "TemplateVersion", "Thread", "ThreadData", "ThreadLastMessage", "Usage", "UsagePlan", "Variable", "VariableTemplate", "Webhook", "WebhookDelivery", "WebhookEventRecord", "WebhookEventRecordAttemptList", "WebhookTestResult", "WebhookTestResultDelivery"]
 
 
 class AccountInfo(BaseModel):
@@ -855,6 +855,72 @@ class EmailShare(BaseModel):
     }
 
 
+class EmailValidation(BaseModel):
+    """The EmailValidation object."""
+
+    checks: EmailValidationChecks
+    did_you_mean: Optional[str]
+    email: str
+    normalized: str
+    object: str
+    reason: str
+    reasons: List[str]
+    result: str
+    score: float
+
+    _fields = {
+        "checks": ("ref", "EmailValidationChecks"),
+        "did_you_mean": None,
+        "email": None,
+        "normalized": None,
+        "object": None,
+        "reason": None,
+        "reasons": None,
+        "result": None,
+        "score": None,
+    }
+
+
+class EmailValidationChecks(BaseModel):
+    """The EmailValidationChecks object."""
+
+    accept_all: Optional[bool]
+    disposable: bool
+    domain: str
+    free: bool
+    mailbox: str
+    mx: List[str]
+    previously_bounced: bool
+    role: bool
+    suppressed: bool
+    syntax: bool
+
+    _fields = {
+        "accept_all": None,
+        "disposable": None,
+        "domain": None,
+        "free": None,
+        "mailbox": None,
+        "mx": None,
+        "previously_bounced": None,
+        "role": None,
+        "suppressed": None,
+        "syntax": None,
+    }
+
+
+class EmailValidationList(BaseModel):
+    """The EmailValidationList object."""
+
+    data: List[EmailValidation]
+    object: str
+
+    _fields = {
+        "data": ("list", ("ref", "EmailValidation")),
+        "object": None,
+    }
+
+
 class ForwardDestination(BaseModel):
     """The ForwardDestination object."""
 
@@ -1206,6 +1272,104 @@ class MetricsTotals(BaseModel):
         "opened": None,
         "sent": None,
         "suppressed": None,
+    }
+
+
+class PlacementAuth(BaseModel):
+    """The PlacementAuth object."""
+
+    dkim: str
+    dmarc: str
+    spf: str
+
+    _fields = {
+        "dkim": None,
+        "dmarc": None,
+        "spf": None,
+    }
+
+
+class PlacementResult(BaseModel):
+    """The PlacementResult object."""
+
+    address: str
+    auth: Optional[PlacementAuth]
+    email_id: Optional[str]
+    folder: Optional[str]
+    placement: Optional[str]
+    provider: str
+    received_at: Optional[str]
+
+    _fields = {
+        "address": None,
+        "auth": ("ref", "PlacementAuth"),
+        "email_id": None,
+        "folder": None,
+        "placement": None,
+        "provider": None,
+        "received_at": None,
+    }
+
+
+class PlacementSummary(BaseModel):
+    """The PlacementSummary object."""
+
+    forums: int
+    inbox: int
+    inbox_rate: float
+    missing: int
+    pending: int
+    primary: int
+    promotions: int
+    social: int
+    spam: int
+    total: int
+    updates: int
+
+    _fields = {
+        "forums": None,
+        "inbox": None,
+        "inbox_rate": None,
+        "missing": None,
+        "pending": None,
+        "primary": None,
+        "promotions": None,
+        "social": None,
+        "spam": None,
+        "total": None,
+        "updates": None,
+    }
+
+
+class PlacementTest(BaseModel):
+    """The PlacementTest object."""
+
+    created_at: str
+    ends_at: str
+    finished_at: Optional[str]
+    from_: Optional[str]
+    id: str
+    mode: str
+    object: str
+    results: List[PlacementResult]
+    status: str
+    subject: Optional[str]
+    summary: PlacementSummary
+    token: str
+
+    _fields = {
+        "created_at": None,
+        "ends_at": None,
+        "finished_at": None,
+        "from": None,
+        "id": None,
+        "mode": None,
+        "object": None,
+        "results": ("list", ("ref", "PlacementResult")),
+        "status": None,
+        "subject": None,
+        "summary": ("ref", "PlacementSummary"),
+        "token": None,
     }
 
 
